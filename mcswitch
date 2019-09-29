@@ -50,10 +50,9 @@ while [[ $idx -le $instanceCount ]]; do
 	outStr="$outStr ${instances[$idx]}"
 	idx=$((idx+1))
 done
-outStr="$outStr Create_New"
 
-instanceName=$(zenity --list --title="Choose Instance" --text="Available Instances" --width=400 --height=320 --column=Instance $outStr)
-if [[ "$instanceName" = "Create_New" ]]; then
+instanceName=$(zenity --list --title="Choose Instance" --text="Available Instances" --width=400 --height=320 --column=Instance $outStr "Create New")
+if [[ "$instanceName" = "Create New" ]]; then
 	if [[ -e "$MCFOLDER" ]]; then
 		rm "$MCFOLDER"
 	fi
@@ -71,5 +70,5 @@ else
 	fi
 	ln -s "$INSTANCES/$instanceName" "$MCFOLDER"
 	zenity --info --width=400 --no-wrap --timeout 3 --icon-name="Terminal" --title="Launching" --text="Launching instance: $instanceName"
-	/opt/minecraft-launcher/minecraft-launcher
+	$(which minecraft-launcher)
 fi

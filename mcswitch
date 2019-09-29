@@ -7,31 +7,26 @@ VERSION="0.1"
 INSTANCES="$HOME/Minecraft Instances"
 MCFOLDER="$HOME/.minecraft"
 
-function checkCurrent
-{
-	if [[ -z $(ls -lF "$MCFOLDER" | grep "\->") ]] && [[ -d "$MCFOLDER" ]]; then
-		#echo "Moving existing instance. Please enter a name for the folder:"
-		#read -r instanceName
-		instanceName=$(zenity --entry --title="Moving current instance" --text="Please enter a name for the new instance." --entry-text="No-spaces-please")
-		if [[ ! -z "$instanceName" ]] && [[ ! -e "$instanceName" ]]; then
-			mv "$MCFOLDER" "$INSTANCES/$instanceName"
-			zenity --info --width=400 --no-wrap --timeout 3 --icon-name="Terminal" --title="Moving current instance" --text="Done moving instance to /$instanceName."
-			unset instanceName
-		elif [[ -z "$instanceName" ]]; then
-			zenity --info --width=400 --no-wrap --timeout 5 --icon-name="Error" --title="Moving current instance" --text="No name supplied. Exiting."
-			exit 1
-		else
-			zenity --info --width=400 --no-wrap --timeout 5 --icon-name="Error" --title="Moving current instance" --text="That instance name already exists. Exiting."
-			exit 2
-		fi
-	fi
-}
+
 
 if [[ ! -d "$INSTANCES" ]]; then
 	mkdir -p "$INSTANCES"
 fi
 
-checkCurrent
+if [[ -z $(ls -lF "$MCFOLDER" | grep "\->") ]] && [[ -d "$MCFOLDER" ]]; then
+	instanceName=$(zenity --entry --title="Moving current instance" --text="Please enter a name for the new instance." --entry-text="No-spaces-please")
+	if [[ ! -z "$instanceName" ]] && [[ ! -e "$instanceName" ]]; then
+		mv "$MCFOLDER" "$INSTANCES/$instanceName"
+		zenity --info --width=400 --no-wrap --timeout 3 --icon-name="Terminal" --title="Moving current instance" --text="Done moving instance to /$instanceName."
+		unset instanceName
+	elif [[ -z "$instanceName" ]]; then
+		zenity --info --width=400 --no-wrap --timeout 5 --icon-name="Error" --title="Moving current instance" --text="No name supplied. Exiting."
+		exit 1
+	else
+		zenity --info --width=400 --no-wrap --timeout 5 --icon-name="Error" --title="Moving current instance" --text="That instance name already exists. Exiting."
+		exit 2
+	fi
+fi
 
 instances=""
 instanceCount=0
@@ -63,7 +58,7 @@ if [[ "$instanceName" = "Create_New" ]]; then
 		rm "$MCFOLDER"
 	fi
 	mkdir "$MCFOLDER"
-	. $0
+	. "$0"
 elif [[ -z "$instanceName" ]]; then
 	zenity --info --width=400 --no-wrap --timeout 3 --icon-name="Terminal" --title="Launching" --text="No instance selected. Exiting."
 	exit 1

@@ -2,6 +2,10 @@
 
 It's a BASH script that switches out softlinks to folders containing minecraft instances, allowing you to, for example, switch between different modpacks using the official Minecraft Java Edition for Linux launcher.
 
+# Why did you write this when we already have multimc?
+
+I just tried to run the FTB Unstable 1.14.4 modpack and couldn't get it to work in multimc. This seems to be the case with modpacks for minecraft version 1.13 and later. The only way I could get the pack to launch was by using multimc to unpack the downloaded zip and pull in all the mods, then transfer it to an existing minecraft instance, created using the official launcher from http://minecraft.net
+
 # How do I set it up?
 
 Ten relatively easy steps. Information on how to do the things listed is available with a quick Google :-)

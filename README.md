@@ -8,7 +8,9 @@ I just tried to run the FTB Unstable 1.14.4 modpack and couldn't get it to work 
 
 # How do I set it up?
 
-Ten relatively easy steps. Information on how to do the things listed is available with a quick Google :-)
+(Approximately) Ten relatively easy steps. Information on how to do the things listed is available with a quick Google :-)
+
+0. Install zenity from the repository. If you don't know how to do that, google "How do I install programs in" and the name of your Linux distribution.
 
 1. Download the script, remember where you put it. I use $HOME/bin sometimes.
 

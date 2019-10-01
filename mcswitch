@@ -13,8 +13,8 @@ fi
 
 okay=false
 
-while ! $okay; do
-	if [[ -z $(ls -lF "$MCFOLDER" | grep "\->") ]] && [[ -d "$MCFOLDER" ]]; then
+if [[ -z $(ls -lF "$MCFOLDER" | grep "\->") ]] && [[ -d "$MCFOLDER" ]]; then
+	while ! $okay; do
 		instanceName=$(zenity --entry --title="Moving current instance" --text="Please enter a name for the new instance." --entry-text="No-spaces-please")
 		if [[ ! -z "$instanceName" ]] && [[ ! -e "$instanceName" ]]; then
 			mv "$MCFOLDER" "$INSTANCES/$instanceName"
@@ -26,8 +26,8 @@ while ! $okay; do
 		else
 			zenity --info --width=400 --no-wrap --timeout 5 --icon-name="Error" --title="Moving current instance" --text="That instance name already exists. Try again."
 		fi
-	fi
-done
+	done
+fi
 
 instances=""
 instanceCount=0

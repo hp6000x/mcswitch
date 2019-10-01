@@ -32,7 +32,7 @@ I just tried to run the FTB Unstable 1.14.4 modpack and couldn't get it to work 
 
 9. Select it from the list and click OK to launch.
 
-10. If you want to create another, run the script, select "Create New", name it and exit the script, then repeat steps 1-9
+10. If you want to create another, run the script, select "Create New", name it, launch it and exit, then repeat steps 3-9
 	
 # What do I do next?
 

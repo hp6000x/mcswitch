@@ -2,7 +2,7 @@
 #mcswitch - zenity-based Minecraft instance switcher
 
 TITLE="mcswitch"
-VERSION="0.2"
+VERSION="0.3"
 
 INSTANCES="$HOME/Minecraft Instances"
 MCFOLDER="$HOME/.minecraft"
@@ -12,63 +12,65 @@ if [[ ! -d "$INSTANCES" ]]; then
 fi
 
 okay=false
+done=false
 
-if [[ -z $(ls -lF "$MCFOLDER" | grep "\->") ]] && [[ -d "$MCFOLDER" ]]; then
-	while ! $okay; do
-		instanceName=$(zenity --entry --title="Moving current instance" --text="Please enter a name for the new instance." --entry-text="No-spaces-please")
-		if [[ ! -z "$instanceName" ]] && [[ ! -e "$instanceName" ]]; then
-			mv "$MCFOLDER" "$INSTANCES/$instanceName"
-			zenity --info --width=400 --no-wrap --timeout 3 --icon-name="Terminal" --title="Moving current instance" --text="Done moving instance to $instanceName."
-			unset instanceName
-			okay=true
-		elif [[ -z "$instanceName" ]]; then
-			exit 1
-		else
-			zenity --info --width=400 --no-wrap --timeout 5 --icon-name="Error" --title="Moving current instance" --text="That instance name already exists. Try again."
+while ! $done; do
+	if [[ -z $(ls -lF "$MCFOLDER" | grep "\->") ]] && [[ -d "$MCFOLDER" ]]; then
+		while ! $okay; do
+			instanceName=$(zenity --entry --title="Moving current instance" --text="Please enter a name for the new instance." --entry-text="No-spaces-please")
+			if [[ ! -z "$instanceName" ]] && [[ ! -e "$instanceName" ]]; then
+				mv "$MCFOLDER" "$INSTANCES/$instanceName"
+				zenity --info --width=400 --no-wrap --timeout 3 --icon-name="Terminal" --title="Moving current instance" --text="Done moving instance to $instanceName."
+				unset instanceName
+				okay=true
+			elif [[ -z "$instanceName" ]]; then
+				exit 1
+			else
+				zenity --info --width=400 --no-wrap --timeout 5 --icon-name="Error" --title="Moving current instance" --text="That instance name already exists. Try again."
+			fi
+		done
+	fi
+
+	instances=""
+	instanceCount=0
+	pushd "$INSTANCES" > /dev/null
+	for inst in *; do
+		if [[ -d "$inst" ]]; then
+			instanceCount=$((instanceCount+1))
+			instances[$instanceCount]=$inst
 		fi
 	done
-fi
+	popd > /dev/null
 
-instances=""
-instanceCount=0
-pushd "$INSTANCES" > /dev/null
-for inst in *; do
-	if [[ -d "$inst" ]]; then
-		instanceCount=$((instanceCount+1))
-		instances[$instanceCount]=$inst
+	if [[ $instanceCount -lt 1 ]]; then
+		outStr=""
+	else
+		outStr="${instances[1]}"
+		idx=2
+		while [[ $idx -le $instanceCount ]]; do
+			outStr="$outStr ${instances[$idx]}"
+			idx=$((idx+1))
+		done
+	fi
+
+	instanceName=$(zenity --list --title="Choose Instance" --text="Available Instances" --width=400 --height=320 --column=Instance $outStr "Create New")
+	if [[ "$instanceName" = "Create New" ]]; then
+		if [[ -e "$MCFOLDER" ]]; then
+			rm "$MCFOLDER"
+		fi
+		mkdir "$MCFOLDER"
+	elif [[ -z "$instanceName" ]]; then
+		zenity --info --width=400 --no-wrap --timeout 3 --icon-name="Terminal" --title="Launching" --text="No instance selected. Exiting."
+		done=true
+	elif [[ ! -d "$INSTANCES/$instanceName" ]]; then
+		zenity --info --width=400 --no-wrap --timeout 3 --icon-name="Terminal" --title="Launching" --text="That's not an instance folder."
+		done=true
+	else
+		if [[ -d "$MCFOLDER" ]]; then
+			rm "$MCFOLDER"
+		fi
+		ln -s "$INSTANCES/$instanceName" "$MCFOLDER"
+		zenity --info --width=400 --no-wrap --timeout 3 --icon-name="Terminal" --title="Launching" --text="Launching instance: $instanceName"
+		$(which minecraft-launcher)
 	fi
 done
-popd > /dev/null
-
-if [[ $instanceCount -lt 1 ]]; then
-	outStr=""
-else
-	outStr="${instances[1]}"
-	idx=2
-	while [[ $idx -le $instanceCount ]]; do
-		outStr="$outStr ${instances[$idx]}"
-		idx=$((idx+1))
-	done
-fi
-
-instanceName=$(zenity --list --title="Choose Instance" --text="Available Instances" --width=400 --height=320 --column=Instance $outStr "Create New")
-if [[ "$instanceName" = "Create New" ]]; then
-	if [[ -e "$MCFOLDER" ]]; then
-		rm "$MCFOLDER"
-	fi
-	mkdir "$MCFOLDER"
-	. "$0"
-elif [[ -z "$instanceName" ]]; then
-	zenity --info --width=400 --no-wrap --timeout 3 --icon-name="Terminal" --title="Launching" --text="No instance selected. Exiting."
-	exit 1
-elif [[ ! -d "$INSTANCES/$instanceName" ]]; then
-	zenity --info --width=400 --no-wrap --timeout 3 --icon-name="Terminal" --title="Launching" --text="That's not an instance folder. Exiting."
-	exit 4
-else
-	if [[ -d "$MCFOLDER" ]]; then
-		rm "$MCFOLDER"
-	fi
-	ln -s "$INSTANCES/$instanceName" "$MCFOLDER"
-	zenity --info --width=400 --no-wrap --timeout 3 --icon-name="Terminal" --title="Launching" --text="Launching instance: $instanceName"
-	$(which minecraft-launcher)
-fi

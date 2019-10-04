@@ -2,7 +2,7 @@
 #mcswitch - zenity-based Minecraft instance switcher
 
 TITLE="mcswitch"
-VERSION="0.3"
+VERSION="0.4"
 
 INSTANCES="$HOME/Minecraft Instances"
 MCFOLDER="$HOME/.minecraft"
@@ -11,11 +11,11 @@ if [[ ! -d "$INSTANCES" ]]; then
 	mkdir -p "$INSTANCES"
 fi
 
-okay=false
 done=false
 
 while ! $done; do
 	if [[ -z $(ls -lF "$MCFOLDER" | grep "\->") ]] && [[ -d "$MCFOLDER" ]]; then
+		okay=false
 		while ! $okay; do
 			instanceName=$(zenity --entry --title="Moving current instance" --text="Please enter a name for the new instance." --entry-text="No-spaces-please")
 			if [[ ! -z "$instanceName" ]] && [[ ! -e "$instanceName" ]]; then

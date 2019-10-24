@@ -2,7 +2,7 @@
 #mcswitch - zenity-based Minecraft instance switcher
 
 TITLE="mcswitch"
-VERSION="0.5"
+VERSION="0.6"
 
 INSTANCES="$HOME/Minecraft Instances"
 MCFOLDER="$HOME/.minecraft"
@@ -53,32 +53,35 @@ while ! $done; do
 		done
 	fi
 
-	instanceName=$(zenity --list --title="Choose Instance" --text="Available Instances" --width=400 --height=320 --column=Instance $outStr "Create New")
-	if [[ "$instanceName" = "Create New" ]]; then
-		newName=$(zenity --entry --title="Creating New instance" --text="Please enter a name for the new instance." --entry-text="No-spaces-please")
-		if [[ -z "$newName" ]]; then
-			zenity --info --width=400 --no-wrap --timeout 3 --icon-name="Terminal" --title="Creating New Instance" --text="Nothing to do."
-		elif [[ -d "$INSTANCES/$newName" ]]; then
-			zenity --info --width=400 --no-wrap --timeout 3 --icon-name="Terminal" --title="Creating New Instance" --text="An instance with the name $newName already exists. Aborting."
-		else
-			if (mkdir "$INSTANCES/$newName"); then
-				zenity --info --width=400 --no-wrap --timeout 3 --icon-name="Terminal" --title="Creating New Instance" --text="New instance $newName created. Launch it to initialise."
+	if instanceName=$(zenity --list --title="Choose Instance" --text="Available Instances" --width=400 --height=320 --column=Instance $outStr "Create New"); then
+		if [[ "$instanceName" = "Create New" ]]; then
+			newName=$(zenity --entry --title="Creating New instance" --text="Please enter a name for the new instance." --entry-text="No-spaces-please")
+			if [[ -z "$newName" ]]; then
+				zenity --info --width=400 --no-wrap --timeout 3 --icon-name="Terminal" --title="Creating New Instance" --text="Nothing to do."
+			elif [[ -d "$INSTANCES/$newName" ]]; then
+				zenity --info --width=400 --no-wrap --timeout 3 --icon-name="Terminal" --title="Creating New Instance" --text="An instance with the name $newName already exists. Aborting."
 			else
-				zenity --info --width=400 --no-wrap --timeout 3 --icon-name="Terminal" --title="Creating New Instance" --text="Instance creation failed. Please try again."
+				if (mkdir "$INSTANCES/$newName"); then
+					zenity --info --width=400 --no-wrap --timeout 3 --icon-name="Terminal" --title="Creating New Instance" --text="New instance $newName created. Launch it to initialise."
+				else
+					zenity --info --width=400 --no-wrap --timeout 3 --icon-name="Terminal" --title="Creating New Instance" --text="Instance creation failed. Please try again."
+				fi
 			fi
+		elif [[ -z "$instanceName" ]]; then
+			zenity --info --width=400 --no-wrap --timeout 3 --icon-name="Terminal" --title="Launching" --text="No instance selected. Exiting." 
+			done=true
+		elif [[ ! -d "$INSTANCES/$instanceName" ]]; then
+			zenity --info --width=400 --no-wrap --timeout 3 --icon-name="Terminal" --title="Launching" --text="That's not an instance folder."
+			done=true
+		else
+			if [[ -d "$MCFOLDER" ]]; then
+				rm "$MCFOLDER"
+			fi
+			ln -s "$INSTANCES/$instanceName" "$MCFOLDER"
+			zenity --info --width=400 --no-wrap --timeout 3 --icon-name="Terminal" --title="Launching" --text="Launching instance: $instanceName" &
+			$(which minecraft-launcher)
 		fi
-	elif [[ -z "$instanceName" ]]; then
-		zenity --info --width=400 --no-wrap --timeout 3 --icon-name="Terminal" --title="Launching" --text="No instance selected. Exiting." 
-		done=true
-	elif [[ ! -d "$INSTANCES/$instanceName" ]]; then
-		zenity --info --width=400 --no-wrap --timeout 3 --icon-name="Terminal" --title="Launching" --text="That's not an instance folder."
-		done=true
 	else
-		if [[ -d "$MCFOLDER" ]]; then
-			rm "$MCFOLDER"
-		fi
-		ln -s "$INSTANCES/$instanceName" "$MCFOLDER"
-		zenity --info --width=400 --no-wrap --timeout 3 --icon-name="Terminal" --title="Launching" --text="Launching instance: $instanceName" &
-		$(which minecraft-launcher)
+		done=true
 	fi
 done

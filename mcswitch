@@ -2,7 +2,7 @@
 #mcswitch - zenity-based Minecraft instance switcher
 
 TITLE="mcswitch"
-VERSION="0.6"
+VERSION="0.7"
 
 INSTANCES="$HOME/Minecraft Instances"
 MCFOLDER="$HOME/.minecraft"
@@ -70,7 +70,7 @@ while ! $done; do
 		elif [[ -z "$instanceName" ]]; then
 			zenity --info --width=400 --no-wrap --timeout 3 --icon-name="Terminal" --title="Launching" --text="No instance selected. Exiting." 
 			done=true
-		elif [[ ! -d "$INSTANCES/$instanceName" ]]; then
+		elif [[ ! -e "$INSTANCES/$instanceName" ]]; then
 			zenity --info --width=400 --no-wrap --timeout 3 --icon-name="Terminal" --title="Launching" --text="That's not an instance folder."
 			done=true
 		else

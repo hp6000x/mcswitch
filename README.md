@@ -18,11 +18,11 @@ I just tried to run the FTB Unstable 1.14.4 modpack and couldn't get it to work 
 
 3. Go to https://files.minecraftforge.net/ and run the installer for the forge version you require
 
-4. Download the modpack you want to play, by fair means or foul (Either from curseforge, using the twitch launcher on a windows pc or in a VM and copying it, or via multimc)
+4. Download the modpack you want to play: go to https://www.curseforge.com/minecraft/modpacks and find the pack you want, click on it to open its page, click on the "Files" tab, scroll down to "Recent files" and click on the latest version, finally you should see a download link, click it and download the modpack
 
-5. If you downloaded a .zip file, you'll need to use multimc to get the actual modpack, as you probably have an overrides file, which isn't the complete pack.
+5. Next, open multimc, create new instance, click on "Import from zip" and navigate to the modpack you downloaded
 
-6. Copy the modpack from either the multimc instance folder, or from the folder you got from a Windows PC into
+6. In multimc, choose "Instance Folder" from the right hand side of the main window, then copy everything in the "minecraft" folder to:
 
 	$HOME/.minecraft
 
